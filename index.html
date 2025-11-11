@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JJ2HFT05Z1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-JJ2HFT05Z1');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Closed</title>
+    <style>
+        /* Basic reset & device compatibility tweaks */
+        *{ margin:0; padding:0; box-sizing:border-box; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Noto Naskh Arabic", sans-serif; }
+        html, body { height:100%; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+        body { background:#313131; color:#fff; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+
+        /* Container */
+        .container{
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:4vh 4vw;
+        }
+
+        /* Responsive heading */
+     h1 {
+    color: #ff4444;
+    font-weight: 700;
+    text-align: center; /* Ensure text is centered */
+    font-size: clamp(1.4rem, 6vw, 3.6rem);
+    line-height: 1.1;
+    word-break: break-word;
+}
+
+
+        /* Typing caret using pseudo element so it works for rtl & ltr */
+        #message.typing::after{
+            content: "";
+            display:inline-block;
+            width:2px;
+            height:1em;
+            background:#ff4444;
+            vertical-align:middle;
+            animation:blink-caret 0.75s step-end infinite;
+            margin-inline-start:0.5ch;
+            margin-inline-end:0; /* default caret on the right for ltr */
+        }
+        /* When message is rtl, place caret on the left */
+        #message[dir="rtl"].typing::after{
+            margin-inline-start:0;
+            margin-inline-end:0.5ch;
+        }
+
+        @keyframes blink-caret {
+            from, to { opacity:0; }
+            50% { opacity:1; }
+        }
+
+        /* Small screens adjustments */
+        @media (max-width:420px){
+            h1{ font-size:clamp(1.2rem, 8vw, 2.2rem); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="message" class="typing" aria-live="polite"></h1>
+    </div>
+
+    <script>
+        // Sequence: Arabic -> English -> French, infinite cycle
+        const sequence = [
+            { text: "تم إغلاق الموقع بواسطة مؤمن", lang: "ar", dir: "rtl" },
+            { text: "Website closed by Moemen",        lang: "en", dir: "ltr" },
+            { text: "Site fermé par Moemen",          lang: "fr", dir: "ltr" }
+        ];
+
+        const messageEl = document.getElementById('message');
+        let index = 0;
+
+        // configuration (tweak speeds here)
+        const TYPE_DELAY = 90;      // ms per char while typing
+        const DELETE_DELAY = 50;    // ms per char while deleting
+        const PAUSE_AFTER_TYPE = 1600; // ms pause after full typed
+        const PAUSE_AFTER_DELETE = 400; // ms pause after fully deleted
+
+        function typeSequenceItem(item, done) {
+            messageEl.classList.add('typing');
+            messageEl.lang = item.lang;
+            messageEl.dir = item.dir;
+            messageEl.style.textAlign = (item.dir === 'rtl') ? 'right' : 'left';
+            messageEl.textContent = '';
+
+            const text = item.text;
+            let i = 0;
+
+            // Type characters one by one
+            const t = setInterval(() => {
+                if (i < text.length) {
+                    messageEl.textContent += text[i];
+                    i++;
+                } else {
+                    clearInterval(t);
+                    setTimeout(() => done(), PAUSE_AFTER_TYPE);
+                }
+            }, TYPE_DELAY);
+        }
+
+        function deleteCurrent(done) {
+            // Keep caret visible during delete
+            messageEl.classList.add('typing');
+
+            let txt = messageEl.textContent;
+            const d = setInterval(() => {
+                if (txt.length > 0) {
+                    txt = txt.slice(0, -1);
+                    messageEl.textContent = txt;
+                } else {
+                    clearInterval(d);
+                    setTimeout(() => {
+                        // ensure caret state consistent
+                        messageEl.classList.remove('typing');
+                        done();
+                    }, PAUSE_AFTER_DELETE);
+                }
+            }, DELETE_DELAY);
+        }
+
+        function loop() {
+            const item = sequence[index];
+            typeSequenceItem(item, () => {
+                deleteCurrent(() => {
+                    index = (index + 1) % sequence.length;
+                    // small delay before typing next
+                    setTimeout(loop, 200);
+                });
+            });
+        }
+
+        // start loop after short delay to allow page render
+        setTimeout(loop, 300);
+    </script>
+</body>
+</html>
