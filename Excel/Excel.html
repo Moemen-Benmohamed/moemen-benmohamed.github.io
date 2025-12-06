@@ -1,98 +1,66 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-JJ2HFT05Z1"></script>
-<script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-JJ2HFT05Z1');
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excel</title>
+    <title>Excel Video</title>
     <style>
-        :root{
-          --bg: rgb(49,49,49);
-          --text: #ffffff;
-          /* Word 2019/365 blue */
-          --primary: #2B579A;
-          --accent-bg: rgba(43,87,154,0.06);
-          --border: #2B579A;
-          --card-shadow: 0 8px 20px rgba(43,87,154,0.15);
-          --card-shadow-hover: 0 12px 28px rgba(43,87,154,0.25);
-          --title-shadow: 0 2px 4px rgba(0,0,0,0.6);
-          --link-shadow: 0 1px 0 rgba(0,0,0,0.3);
-          --font-stack: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-        }
-        *{
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: var(--font-stack);
-        }
-        html, body {
-            height: 100%;
-            background: var(--bg);
-            color: var(--text);
-            -webkit-font-smoothing: antialiased;
-            overflow: hidden; /* Prevent scrolling */
-        }
-        .container{
-            background-color: var(--bg);
-            min-height: 100vh;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0; /* Remove padding for full-screen video */
-        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html, body { height:100%; overflow:hidden; background:#000; }
         video {
-            width: 100vw;
-            height: 100vh;
-            object-fit: contain; /* Scales to max device resolution without distortion */
-            background: black; /* Fallback for loading */
+            width:100vw; height:100vh; object-fit:cover;
         }
-        .no-video {
-            color: var(--primary);
-            font-weight: 700;
-            text-shadow: var(--title-shadow);
-            text-align: center;
-            padding: 20px;
+        .start-screen {
+            position: fixed; inset:0; background:rgba(0,0,0,0.85);
+            display:flex; flex-direction:column; align-items:center;
+            justify-content:center; color:#fff; font-family:system-ui,sans-serif;
+            gap:24px; font-size:1.4rem; text-align:center; z-index:10;
         }
-        @media (max-width: 480px) {
-            .container { padding: 0; }
-            .no-video { font-size: 1.25rem; }
+        .play-btn {
+            background:#217346; color:white; border:none; padding:16px 40px;
+            font-size:1.3rem; border-radius:12px; cursor:pointer;
+            box-shadow:0 8px 20px rgba(0,0,0,0.5);
         }
-        @media (min-width: 481px) and (max-width: 900px) {
-            .no-video { font-size: 1.03rem; }
-        }
+        .play-btn:active { transform:scale(0.95); }
     </style>
 </head>
 <body>
-    <div class="container">
-        <video id="videoPlayer" autoplay controls playsinline></video>
-        <div id="noVideoMessage" class="no-video" style="display: none;">No video specified. Please go back and select one.</div>
+
+    <!-- Start screen – forces user interaction so sound is allowed -->
+    <div class="start-screen" id="startScreen">
+        <div>اضغط لتشغيل الفيديو بصوت</div>
+        <button class="play-btn" id="playButton">تشغيل الفيديو</button>
     </div>
+
+    <video id="myVideo" playsinline>
+        <!-- Change to .mp4 with sound (this works everywhere) -->
+        <source src="resources/ex.mp4" type="video/mp4">
+        <!-- Keep .mov as fallback only for Safari -->
+        <source src="resources/ex.mp4" type="video/quicktime">
+        Your browser does not support video.
+    </video>
+
     <script>
-        // Get video from URL parameter (e.g., ?video=p1.mp4)
-        const urlParams = new URLSearchParams(window.location.search);
-        const videoSrc = urlParams.get('video');
+        const video = document.getElementById('myVideo');
+        const startScreen = document.getElementById('startScreen');
+        const playButton = document.getElementById('playButton');
 
-        const videoElement = document.getElementById('videoPlayer');
-        const noVideoMessage = document.getElementById('noVideoMessage');
+        playButton.onclick = () => {
+            startScreen.style.display = 'none';
+            video.muted = false;           // sound ON
+            video.play();
 
-        if (videoSrc) {
-            videoElement.src = videoSrc;
-            // When video ends, go back to previous page
-            videoElement.addEventListener('ended', () => {
+            // When video ends → go back
+            video.onended = () => {
                 history.back();
-            });
-        } else {
-            videoElement.style.display = 'none';
-            noVideoMessage.style.display = 'block';
-        }
+            };
+        };
+
+        // If video fails to load
+        video.onerror = () => {
+            alert("فشل تحميل الفيديو");
+            history.back();
+        };
     </script>
 </body>
 </html>
