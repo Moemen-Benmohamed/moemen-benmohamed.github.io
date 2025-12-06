@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JJ2HFT05Z1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-JJ2HFT05Z1');
+</script>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Tesla</title>
+        <style>
+                :root{
+                    --bg: rgb(49,49,49);
+                    --text: #ffffff;
+                    --primary: #2B579A;
+                    --accent-bg: rgba(43,87,154,0.06);
+                    --border: #2B579A;
+                    --card-shadow: 0 8px 20px rgba(43,87,154,0.15);
+                    --card-shadow-hover: 0 12px 28px rgba(43,87,154,0.25);
+                    --title-shadow: 0 2px 4px rgba(0,0,0,0.6);
+                    --link-shadow: 0 1px 0 rgba(0,0,0,0.3);
+                    --font-stack: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+                }
+                
+                *{
+                        margin: 0;
+                        padding: 0;
+                        box-sizing: border-box;
+                        font-family: var(--font-stack);
+                }
+                html, body {
+                        height: 100%;
+                        background: var(--bg);
+                        color: var(--text);
+                        -webkit-font-smoothing: antialiased;
+                }
+
+                .container{
+                        background-color: var(--bg);
+                        min-height: 100vh;
+                        width: 100%;
+                        padding: 40px 16px;
+                }
+                h1{
+                        color: var(--primary);
+                        font-weight: bold;
+                        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+                        margin: 30px 0;
+                        text-align: center;
+                        text-shadow: var(--title-shadow);
+                }
+
+                .choice{
+                        width: 100%;
+                        max-width: 720px;
+                        padding: 14px 16px;
+                        border: 2px solid var(--border);
+                        border-radius: 10px;
+                        margin: 12px auto;
+                        background: var(--accent-bg);
+                        box-shadow: var(--card-shadow);
+                        transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+                        overflow-wrap: anywhere;
+                        -webkit-font-smoothing: antialiased;
+                }
+
+                .choice:hover{
+                        transform: translateY(-4px);
+                        box-shadow: var(--card-shadow-hover);
+                        opacity: 0.98;
+                }
+
+                .choice a{
+                        display: block;
+                        color: var(--primary);
+                        text-decoration: none;
+                        text-align: center;
+                        font-weight: 700;
+                        font-size: 1rem;
+                        padding: 8px 6px;
+                        line-height: 1.35;
+                        word-break: break-word;
+                        hyphens: auto;
+                        text-shadow: var(--link-shadow);
+                }
+
+                .choice:active { transform: translateY(-1px) scale(.998); }
+
+                @media (max-width: 480px) {
+                        .container { padding: 20px 12px; }
+                        h1 { font-size: 1.25rem; margin: 18px 0; }
+                        .choice {
+                                max-width: none;
+                                width: calc(100% - 16px);
+                                padding: 12px;
+                                border-radius: 8px;
+                                margin: 10px auto;
+                        }
+                        .choice a {
+                                font-size: 1.05rem;
+                                padding: 10px 6px;
+                                text-align: center;
+                        }
+                }
+
+                @media (min-width: 481px) and (max-width: 900px) {
+                        .choice { max-width: 560px; padding: 14px; border-radius: 9px; }
+                        .choice a { font-size: 1.03rem; }
+                }
+
+        </style>
+</head>
+<body>
+        <div class="container">
+                <h1>اختر السؤال المطلوب </h1>
+                <div class="choice"><a target="_blank" href="#" onclick="window.open('p1.mp4', '_blank')">Dans les propriétés du fichier, ajoutez (Véhicule) en guise de catégorie.</a></div>
+                <div class="choice"><a target="_blank" href="#" onclick="window.open('p2.mp4', '_blank')">Utilisez un outil de Word pour remplacer tous les mots de (groupe) par (ensemble).</a></div>
+                <div class="choice"><a target="_blank" href="#" onclick="window.open('p3.mp4', '_blank')">Dans la section (Rouler en véhicule électrique), fusionnez les cellules dans la première ligne du tableau.</a></div>
+                <div class="choice"><a target="_blank" href="#" onclick="window.open('p4.mp4', '_blank')">Modifiez la table des matières pour n'afficher que les titres de niveau 1.</a></div>
+                <div class="choice"><a target="_blank" href="#" onclick="window.open('p5.mp4', '_blank')">Dans la section (La marche arrière), changez l'habillage du texte de l'image en choisissant Encadré.</a></div>
+                <div class="choice"><a target="_blank" href="#" onclick="window.open('p6.mp4', '_blank')">Résolvez le commentaire du sous-titre (Le freinage par récupération), .</a></div>
+        </div>
+</body>
+</html>
