@@ -10,53 +10,62 @@
         video {
             width:100vw; height:100vh; object-fit:cover;
         }
-        .start-screen {
-            position: fixed; inset:0; background:rgba(0,0,0,0.85);
-            display:flex; flex-direction:column; align-items:center;
-            justify-content:center; color:#fff; font-family:system-ui,sans-serif;
-            gap:24px; font-size:1.4rem; text-align:center; z-index:10;
+        /* نخفي الزر تمامًا لكن نتركه موجود عشان نضغط عليه برمجيًا */
+        #fakePlayButton {
+            position:fixed; top:-9999px; left:-9999px; opacity:0;
         }
-        .play-btn {
-            background:#217346; color:white; border:none; padding:16px 40px;
-            font-size:1.3rem; border-radius:12px; cursor:pointer;
-            box-shadow:0 8px 20px rgba(0,0,0,0.5);
+        .loading {
+            position:fixed; inset:0; background:rgba(0,0,0,0.9);
+            display:flex; align-items:center; justify-content:center;
+            color:#fff; font-family:system-ui; font-size:1.4rem; z-index:99;
         }
-        .play-btn:active { transform:scale(0.95); }
+        .spinner {
+            border:5px solid #333; border-top:5px solid #fff;
+            border-radius:50%; width:50px; height:50px;
+            animation:spin 1s linear infinite; margin-left:20px;
+        }
+        @keyframes spin { to { transform:rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <!-- Start screen – forces user interaction so sound is allowed -->
-    <div class="start-screen" id="startScreen">
-        <div>اضغط لتشغيل الفيديو بصوت</div>
-        <button class="play-btn" id="playButton">تشغيل الفيديو</button>
-    </div>
+    <!-- زر وهمي مخفي تمامًا (مطلوب للسماح بالصوت) -->
+    <button id="fakePlayButton"></button>
 
-    <video id="myVideo" playsinline>
-        <!-- Change to .mp4 with sound (this works everywhere) -->
+    <!-- شاشة تحميل بسيطة تختفي لما الفيديو يجهز -->
+    <div class="loading" id="loading">جاري التحميل <div class="spinner"></div></div>
+
+    <video id="myVideo" playsinline preload="auto">
         <source src="resources/ex.mp4" type="video/mp4">
-        <!-- Keep .mov as fallback only for Safari -->
         <source src="resources/ex.mp4" type="video/quicktime">
-        Your browser does not support video.
     </video>
 
     <script>
         const video = document.getElementById('myVideo');
-        const startScreen = document.getElementById('startScreen');
-        const playButton = document.getElementById('playButton');
+        const loading = document.getElementById('loading');
+        const fakeBtn = document.getElementById('fakePlayButton');
 
-        playButton.onclick = () => {
-            startScreen.style.display = 'none';
-            video.muted = false;           // sound ON
-            video.play();
+        // نحمل الفيديو من أول لحظة
+        video.load();
 
-            // When video ends → go back
-            video.onended = () => {
-                history.back();
-            };
+        // لما يجهز الفيديو بما فيه الكفاية → نشغّل تلقائي
+        video.addEventListener('canplaythrough', () => {
+            // نضغط الزر الوهمي برمجيًا عشان يسمح الصوت
+            fakeBtn.click();
+
+            video.muted = false;
+            video.play().then(() => {
+                loading.style.display = 'none';  // نطفي شاشة التحميل
+            }).catch(() => {});
+        }, { once: true });
+
+        // إذا انتهى الفيديو → نرجع للخلف (أو نعيد تشغيله حسب رغبتك)
+        video.onended = () => {
+            history.back();
+            // أو video.play(); لو تبغاه يعيد نفسه
         };
 
-        // If video fails to load
+        // في حال فشل التحميل
         video.onerror = () => {
             alert("فشل تحميل الفيديو");
             history.back();
