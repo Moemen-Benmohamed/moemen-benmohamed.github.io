@@ -7,65 +7,118 @@
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         html, body { height:100%; overflow:hidden; background:#000; }
+
         video {
             width:100vw; height:100vh; object-fit:cover;
         }
-        /* نخفي الزر تمامًا لكن نتركه موجود عشان نضغط عليه برمجيًا */
+
+        /* Invisible fake button – required to unlock audio on mobile */
         #fakePlayButton {
-            position:fixed; top:-9999px; left:-9999px; opacity:0;
+            position:fixed; top:-9999px; left:-9999px; opacity:0; pointer-events:none;
         }
+
+        /* Loading overlay */
         .loading {
-            position:fixed; inset:0; background:rgba(0,0,0,0.9);
-            display:flex; align-items:center; justify-content:center;
-            color:#fff; font-family:system-ui; font-size:1.4rem; z-index:99;
+            position:fixed; inset:0; background:rgba(0,0,0,0.95);
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            color:#fff; font-family:system-ui, sans-serif; font-size:1.4rem; z-index:99;
+            gap:30px;
         }
+
+        /* Progress bar container */
+        .progress-container {
+            width:80%; max-width:400px; height:8px; background:#333; border-radius:4px; overflow:hidden;
+        }
+        .progress-bar {
+            height:100%; width:0%; background:#217346; transition:width 0.2s ease;
+        }
+
+        /* Spinner (optional – looks nice while waiting) */
         .spinner {
             border:5px solid #333; border-top:5px solid #fff;
             border-radius:50%; width:50px; height:50px;
-            animation:spin 1s linear infinite; margin-left:20px;
+            animation:spin 1s linear infinite;
         }
         @keyframes spin { to { transform:rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <!-- زر وهمي مخفي تمامًا (مطلوب للسماح بالصوت) -->
-    <button id="fakePlayButton"></button>
+    <!-- Invisible button to unlock audio on mobile browsers -->
+    <button id="fakePlayButton" aria-hidden="true"></button>
 
-    <!-- شاشة تحميل بسيطة تختفي لما الفيديو يجهز -->
-    <div class="loading" id="loading">جاري التحميل <div class="spinner"></div></div>
+    <!-- Loading screen with percentage -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div id="progressText">جاري التحميل... 0%</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    </div>
 
-    <video id="myVideo" playsinline preload="auto">
+    <!-- Main video -->
+    <video id="myVideo" playsinline preload="auto" muted>
         <source src="resources/ex.mp4" type="video/mp4">
         <source src="resources/ex.mp4" type="video/quicktime">
+        Your browser does not support video.
     </video>
 
     <script>
         const video = document.getElementById('myVideo');
         const loading = document.getElementById('loading');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
         const fakeBtn = document.getElementById('fakePlayButton');
 
-        // نحمل الفيديو من أول لحظة
+        // Force video to start loading immediately
         video.load();
 
-        // لما يجهز الفيديو بما فيه الكفاية → نشغّل تلقائي
-        video.addEventListener('canplaythrough', () => {
-            // نضغط الزر الوهمي برمجيًا عشان يسمح الصوت
-            fakeBtn.click();
+        // Update progress bar as video buffers
+        const updateProgress = () => {
+            if (video.buffered.length > 0) {
+                const bufferedEnd = video.buffered.end(0);
+                const duration = video.duration;
+                if (duration > 0) {
+                    const percent = Math.floor((bufferedEnd / duration) * 100);
+                    progressBar.style.width = percent + '%';
+                    progressText.textContent = `جاري التحميل... ${percent}%`;
 
-            video.muted = false;
-            video.play().then(() => {
-                loading.style.display = 'none';  // نطفي شاشة التحميل
-            }).catch(() => {});
-        }, { once: true });
-
-        // إذا انتهى الفيديو → نرجع للخلف (أو نعيد تشغيله حسب رغبتك)
-        video.onended = () => {
-            history.back();
-            // أو video.play(); لو تبغاه يعيد نفسه
+                    // When we have enough data (or fully loaded), start playback
+                    if (percent >= 100 || video.readyState >= 3) { // HAVE_FUTURE_DATA or better
+                        startPlayback();
+                    }
+                }
+            }
         };
 
-        // في حال فشل التحميل
+        // Check progress frequently
+        video.addEventListener('progress', updateProgress);
+        video.addEventListener('loadedmetadata', updateProgress);
+        video.addEventListener('canplay', updateProgress);
+
+        // Fallback: if 'progress' event is not firing fast enough, poll every 300ms
+        const progressInterval = setInterval(updateProgress, 300);
+
+        // Start video with sound (triggered only after user gesture via fake button)
+        const startPlayback = () => {
+            clearInterval(progressInterval); // stop polling
+            fakeBtn.click();                 // unlock audio (required on iOS/Android)
+            video.muted = false;
+            video.play().then(() => {
+                loading.style.opacity = '0';
+                setTimeout(() => loading.style.display = 'none', 400);
+            }).catch(err => {
+                console.error("Playback failed:", err);
+            });
+        };
+
+        // Optional: if video finishes → go back (or loop)
+        video.onended = () => {
+            history.back();
+            // Or use: video.play(); to loop
+        };
+
+        // Error handling
         video.onerror = () => {
             alert("فشل تحميل الفيديو");
             history.back();
