@@ -7,47 +7,33 @@
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         html, body { height:100%; overflow:hidden; background:#000; }
+        video { width:100vw; height:100vh; object-fit:cover; }
 
-        video {
-            width:100vw; height:100vh; object-fit:cover;
-        }
+        /* Invisible button to unlock audio */
+        #fakePlayButton { position:fixed; top:-9999px; opacity:0; pointer-events:none; }
 
-        /* Invisible fake button – required to unlock audio on mobile */
-        #fakePlayButton {
-            position:fixed; top:-9999px; left:-9999px; opacity:0; pointer-events:none;
-        }
-
-        /* Loading overlay */
         .loading {
             position:fixed; inset:0; background:rgba(0,0,0,0.95);
             display:flex; flex-direction:column; align-items:center; justify-content:center;
-            color:#fff; font-family:system-ui, sans-serif; font-size:1.4rem; z-index:99;
-            gap:30px;
+            color:#fff; font-family:system-ui,sans-serif; font-size:1.4rem; z-index:99; gap:30px;
         }
-
-        /* Progress bar container */
         .progress-container {
-            width:80%; max-width:400px; height:8px; background:#333; border-radius:4px; overflow:hidden;
+            width:80%; max-width:400px; height:10px; background:#333; border-radius:5px; overflow:hidden;
         }
         .progress-bar {
-            height:100%; width:0%; background:#217346; transition:width 0.2s ease;
+            height:100%; width:0%; background:#217346; transition:width 0.3s ease;
         }
-
-        /* Spinner (optional – looks nice while waiting) */
         .spinner {
-            border:5px solid #333; border-top:5px solid #fff;
-            border-radius:50%; width:50px; height:50px;
-            animation:spin 1s linear infinite;
+            border:6px solid #333; border-top:6px solid #fff;
+            border-radius:50%; width:50px; height:50px; animation:spin 1s linear infinite;
         }
         @keyframes spin { to { transform:rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <!-- Invisible button to unlock audio on mobile browsers -->
     <button id="fakePlayButton" aria-hidden="true"></button>
 
-    <!-- Loading screen with percentage -->
     <div class="loading" id="loading">
         <div class="spinner"></div>
         <div id="progressText">جاري التحميل... 0%</div>
@@ -56,12 +42,7 @@
         </div>
     </div>
 
-    <!-- Main video -->
-    <video id="myVideo" playsinline preload="auto" muted>
-        <source src="resources/ex.mp4" type="video/mp4">
-        <source src="resources/ex.mp4" type="video/quicktime">
-        Your browser does not support video.
-    </video>
+    <video id="myVideo" playsinline preload="auto" muted></video>
 
     <script>
         const video = document.getElementById('myVideo');
@@ -70,55 +51,61 @@
         const progressText = document.getElementById('progressText');
         const fakeBtn = document.getElementById('fakePlayButton');
 
-        // Force video to start loading immediately
+        // Set the video source (you can keep both if you want)
+        video.src = "resources/ex.mp4";  // ← one line is cleaner and works everywhere
         video.load();
 
-        // Update progress bar as video buffers
-        const updateProgress = () => {
-            if (video.buffered.length > 0) {
-                const bufferedEnd = video.buffered.end(0);
-                const duration = video.duration;
-                if (duration > 0) {
-                    const percent = Math.floor((bufferedEnd / duration) * 100);
-                    progressBar.style.width = percent + '%';
-                    progressText.textContent = `جاري التحميل... ${percent}%`;
+        let hasStartedPlaying = false;
 
-                    // When we have enough data (or fully loaded), start playback
-                    if (percent >= 100 || video.readyState >= 3) { // HAVE_FUTURE_DATA or better
-                        startPlayback();
-                    }
+        const updateProgress = () => {
+            if (video.buffered.length === 0) return;
+
+            const bufferedEnd = video.buffered.end(video.buffered.length - 1);
+            const duration = video.duration;
+
+            if (duration > 0) {
+                const percent = Math.floor((bufferedEnd / duration) * 100);
+                progressBar.style.width = percent + '%';
+                progressText.textContent = `جاري التحميل... ${percent}%`;
+
+                // Only start when 100% is fully buffered
+                if (percent >= 100 && !hasStartedPlaying) {
+                    hasStartedPlaying = true;
+                    startVideo();
                 }
             }
         };
 
-        // Check progress frequently
-        video.addEventListener('progress', updateProgress);
-        video.addEventListener('loadedmetadata', updateProgress);
-        video.addEventListener('canplay', updateProgress);
+        const startVideo = () => {
+            // Unlock audio with fake user gesture
+            fakeBtn.click();
 
-        // Fallback: if 'progress' event is not firing fast enough, poll every 300ms
-        const progressInterval = setInterval(updateProgress, 300);
-
-        // Start video with sound (triggered only after user gesture via fake button)
-        const startPlayback = () => {
-            clearInterval(progressInterval); // stop polling
-            fakeBtn.click();                 // unlock audio (required on iOS/Android)
             video.muted = false;
             video.play().then(() => {
                 loading.style.opacity = '0';
-                setTimeout(() => loading.style.display = 'none', 400);
-            }).catch(err => {
-                console.error("Playback failed:", err);
-            });
+                setTimeout(() => loading.style.display = 'none', 500);
+            }).catch(err => console.error("Play failed:", err));
         };
 
-        // Optional: if video finishes → go back (or loop)
-        video.onended = () => {
-            history.back();
-            // Or use: video.play(); to loop
-        };
+        // Multiple events to catch buffering progress accurately
+        video.addEventListener('progress', updateProgress);
+        video.addEventListener('loadedmetadata', updateProgress);
+        video.addEventListener('canplaythrough', updateProgress);
+        video.addEventListener('load', updateProgress);
 
-        // Error handling
+        // Fallback polling (very important for some browsers/mobile)
+        const checkInterval = setInterval(() => {
+            if (hasStartedPlaying) {
+                clearInterval(checkInterval);
+                return;
+            }
+            updateProgress();
+        }, 300);
+
+        // When video ends → go back
+        video.onended = () => history.back();
+
+        // Error
         video.onerror = () => {
             alert("فشل تحميل الفيديو");
             history.back();
