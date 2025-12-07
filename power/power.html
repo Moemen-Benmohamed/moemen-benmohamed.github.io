@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JJ2HFT05Z1"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-JJ2HFT05Z1');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختر النسخة</title>
+    <style>
+        :root{
+            /* PowerPoint Orange Theme */
+            --bg: rgb(49,49,49);
+            --text: #ffffff;
+            --primary: #D24726;
+            --accent-bg: rgba(210,71,38,0.06);
+            --border: #D24726;
+            --card-shadow: 0 8px 20px rgba(210,71,38,0.15);
+            --card-shadow-hover: 0 12px 28px rgba(210,71,38,0.25);
+            --title-shadow: 0 2px 4px rgba(0,0,0,0.6);
+            --link-shadow: 0 1px 0 rgba(0,0,0,0.3);
+            --font-stack: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+        }
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-stack);
+            -webkit-font-smoothing: antialiased;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .container {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0 0 40px;
+            font-size: 1.5rem;
+            color: var(--primary);
+            text-shadow: var(--title-shadow);
+            direction: rtl;
+        }
+        .choices {
+            width: min(420px, 92%);
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .choice {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 56px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: var(--accent-bg);
+            box-shadow: var(--card-shadow);
+            text-decoration: none;
+            transition: transform 150ms ease, box-shadow 150ms ease, opacity 150ms ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .choice a {
+            display: block;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-shadow: var(--link-shadow);
+        }
+        .choice:hover, .choice:focus {
+            transform: translateY(-4px);
+            box-shadow: var(--card-shadow-hover);
+            opacity: 0.98;
+        }
+        .choice:active {
+            transform: translateY(-2px);
+        }
+        @media (max-width: 480px) {
+            h1 { font-size: 1.25rem; }
+            .choice { padding: 12px; min-height: 48px; }
+            .choice a { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>اختر رقم النسخة المطلوبة</h1>
+        <div class="choices">
+            <div class="choice"><a href="Version1.html">Version 1</a></div>
+            <div class="choice"><a href="Version2.html">Version 2</a></div>
+        </div>
+    </div>
+</body>
+</html>

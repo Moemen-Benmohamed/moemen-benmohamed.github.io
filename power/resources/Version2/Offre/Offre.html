@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JJ2HFT05Z1"></script>
+<script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-JJ2HFT05Z1');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offre</title>
+    <style>
+        :root{
+          --bg: rgb(49,49,49);
+          --text: #ffffff;
+          /* PowerPoint Orange Theme */
+          --primary: #D24726;
+          --accent-bg: rgba(210,71,38,0.06);
+          --border: #D24726;
+          --card-shadow: 0 8px 20px rgba(210,71,38,0.15);
+          --card-shadow-hover: 0 12px 28px rgba(210,71,38,0.25);
+          --title-shadow: 0 2px 4px rgba(0,0,0,0.6);
+          --link-shadow: 0 1px 0 rgba(0,0,0,0.3);
+          --font-stack: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-stack);
+        }
+
+        html, body {
+            height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container{
+            background-color: var(--bg);
+            min-height: 100vh;
+            width: 100%;
+            padding: 40px 16px;
+        }
+
+        h1{
+            color: var(--primary);
+            font-weight: bold;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            margin: 30px 0;
+            text-align: center;
+            text-shadow: var(--title-shadow);
+        }
+
+        /* PowerPoint orange themed card */
+        .theme-card{
+            width: 100%;
+            max-width: 720px;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            margin: 12px auto;
+            background: var(--accent-bg);
+            box-shadow: var(--card-shadow);
+            transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+            overflow-wrap: anywhere;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .theme-card:hover{
+            transform: translateY(-4px);
+            box-shadow: var(--card-shadow-hover);
+            opacity: 0.98;
+        }
+
+        .theme-card a{
+            display: block;
+            color: var(--primary);
+            text-decoration: none;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 8px 6px;
+            line-height: 1.35;
+            word-break: break-word;
+            hyphens: auto;
+            text-shadow: var(--link-shadow);
+        }
+
+        .theme-card:active { 
+            transform: translateY(-1px) scale(.998); 
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 20px 12px; }
+            h1 { font-size: 1.25rem; margin: 18px 0; }
+            .theme-card {
+                max-width: none;
+                width: calc(100% - 16px);
+                padding: 12px;
+                border-radius: 8px;
+                margin: 10px auto;
+            }
+            .theme-card a {
+                font-size: 1.05rem;
+                padding: 10px 6px;
+            }
+        }
+
+        @media (min-width: 481px) and (max-width: 900px) {
+            .theme-card { max-width: 560px; padding: 14px; border-radius: 8px; }
+            .theme-card a { font-size: 1.03rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>اختر السؤال المطلوب </h1>
+        
+        <div class="theme-card"><a target="_blank" href="#" onclick="window.open('p1.mp4', '_blank')">Ajoutez le mot "Publique" dans la propriété (Catégorie) du fichier.</a></div>
+        <div class="theme-card"><a target="_blank" href="#" onclick="window.open('p2.mp4', '_blank')">A la suite de la diapositive (Propriété non réclamée), créez des diapositives en important le plan du document Auction contenu dans le dossier Documents.</a></div>
+        <div class="theme-card"><a target="_blank" href="#" onclick="window.open('p3.mp4', '_blank')">Dans la diapositive (Publicité), ajoutez le mot "Vente en ligne" comme (Texte de remplacement) de l’image.</a></div>
+        <div class="theme-card"><a target="_blank" href="#" onclick="window.open('p4.mp4', '_blank')">Dans la diapositive (Propriété non réclamée), insérez une ligne à la fin du tableau. Dans la ligne, entrez "Smartphone" dans la colonne (Description d’objet) et "1750 $" dans la colonne (Ventes Totales).</a></div>
+        <div class="theme-card"><a target="_blank" href="#" onclick="window.open('p5.mp4', '_blank')">Dans la diapositive (Opérations de ventes en public) et en utilisant l’Espace réservé du contenu, créez un graphique Histogramme groupé 3D qui affiche le contenu du tableau.</a></div>
+    </div>
+</body>
+</html>

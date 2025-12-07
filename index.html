@@ -8,7 +8,8 @@
         /* global resets & theme */
         *,*::before,*::after{box-sizing:border-box}
         html,body{height:100%;margin:0;padding:0;background: rgb(49,49,49); color:#fff; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; -webkit-font-smoothing:antialiased}
-        body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+        body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative}
+
         .container{width:100%;max-width:680px;text-align:center}
 
         h1{margin:0 0 18px;font-size:1.25rem;font-weight:700;direction:rtl}
@@ -26,17 +27,17 @@
         .app{
             display:flex;
             align-items:center;
-            justify-content:space-between; /* label one side, icon the other */
+            justify-content:space-between;
             gap:12px;
             padding:12px 14px;
-            min-height:54px; /* comfortable touch target */
+            min-height:54px;
             border:2px solid rgba(255,255,255,0.08);
             border-radius:8px;
             text-decoration:none;
             background: rgba(255,255,255,0.02);
             box-shadow:0 6px 18px rgba(0,0,0,0.35);
             transition: transform 150ms ease, box-shadow 150ms ease, opacity 150ms ease, border-color 150ms;
-            direction:rtl; /* keep natural RTL reading, icon sits after text */
+            direction:rtl;
             -webkit-tap-highlight-color: transparent;
         }
         .app:focus-visible{ outline: none; box-shadow: 0 0 0 4px rgba(255,255,255,0.04), 0 8px 20px rgba(0,0,0,0.45) }
@@ -47,7 +48,7 @@
             font-weight:700;
             font-size:1rem;
             flex:1;
-            text-align:right; /* readable in RTL */
+            text-align:right;
         }
         .app .icon{
             flex:0 0 auto;
@@ -57,43 +58,143 @@
             display:inline-block;
         }
 
-        /* application specific color for label and accent shadow */
-        .app-word{
-            border-color:#2B579A;
-            box-shadow: 0 8px 20px rgba(43,87,154,0.18);
-        }
+        /* colors */
+        .app-word{ border-color:#2B579A; box-shadow: 0 8px 20px rgba(43,87,154,0.18); }
         .app-word .label{ color:#2B579A; text-shadow:0 1px 0 rgba(0,0,0,0.45) }
 
-        .app-excel{
-            border-color:#217346;
-            box-shadow: 0 8px 20px rgba(33,115,70,0.18);
-        }
+        .app-excel{ border-color:#217346; box-shadow: 0 8px 20px rgba(33,115,70,0.18); }
         .app-excel .label{ color:#217346; text-shadow:0 1px 0 rgba(0,0,0,0.45) }
 
-        .app-ppt{
-            border-color:#D24726;
-            box-shadow: 0 8px 20px rgba(210,71,38,0.18);
-        }
+        .app-ppt{ border-color:#D24726; box-shadow: 0 8px 20px rgba(210,71,38,0.18); }
         .app-ppt .label{ color:#D24726; text-shadow:0 1px 0 rgba(0,0,0,0.45) }
 
-        /* hover/focus states */
-        .app:hover, .app:focus{ transform: translateY(-4px); opacity:0.98; text-decoration:none; }
+        .app:hover, .app:focus{ transform: translateY(-4px); opacity:0.98; }
 
-        /* responsive tweaks */
         @media (max-width:480px){
             .apps{ width: 92% }
             .app{ padding:10px; font-size:0.95rem; border-radius:7px }
         }
+
+        /* ──────── Popup Styles ──────── */
+        #welcomePopup{
+            position:fixed;
+            inset:0;
+            background:rgba(0,0,0,0.88);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            z-index:9999;
+            opacity:0;
+            visibility:hidden;
+            transition:opacity .4s ease, visibility .4s ease;
+            padding:20px;
+            direction:rtl;
+            font-family:inherit;
+        }
+        #welcomePopup.show{
+            opacity:1;
+            visibility:visible;
+        }
+        .popup-content{
+            background:rgb(49,49,49);
+            border:3px solid #2B579A; /* start with Word blue */
+            border-radius:16px;
+            padding:28px 24px;
+            max-width:420px;
+            width:100%;
+            text-align:center;
+            box-shadow:0 12px 40px rgba(43,87,154,0.3); /* start with Word shadow */
+            animation: borderCycle 6s infinite ease-in-out, shadowCycle 6s infinite ease-in-out;
+        }
+        .popup-content h2{
+            margin:0 0 18px;
+            font-size:1.4rem;
+            color: #2B579A; /* start with Word blue */
+            animation: colorCycle 6s infinite ease-in-out;
+        }
+        .popup-content p{
+            line-height:1.75;
+            margin:14px 0;
+            font-size:1.02rem;
+        }
+        .popup-content strong{
+            color: #2B579A; /* start with Word blue */
+            animation: colorCycle 6s infinite ease-in-out;
+        }
+        #closePopup{
+            margin-top:24px;
+            padding:12px 32px;
+            background:#2B579A; /* start with Word blue */
+            color:#fff;
+            border:none;
+            border-radius:8px;
+            font-weight:700;
+            font-size:1rem;
+            cursor:pointer;
+            transition:background .2s;
+            animation: bgCycle 6s infinite ease-in-out;
+        }
+        #closePopup:hover{
+            filter: brightness(1.1); /* general lighten on hover */
+        }
+
+        /* Animations for cycling colors: Word Blue → Excel Green → PowerPoint Orange → back */
+        @keyframes colorCycle {
+            0% { color: #2B579A; }
+            33% { color: #217346; }
+            66% { color: #D24726; }
+            100% { color: #2B579A; }
+        }
+
+        @keyframes bgCycle {
+            0% { background: #2B579A; }
+            33% { background: #217346; }
+            66% { background: #D24726; }
+            100% { background: #2B579A; }
+        }
+
+        @keyframes borderCycle {
+            0% { border-color: #2B579A; }
+            33% { border-color: #217346; }
+            66% { border-color: #D24726; }
+            100% { border-color: #2B579A; }
+        }
+
+        @keyframes shadowCycle {
+            0% { box-shadow: 0 12px 40px rgba(43,87,154,0.3); }
+            33% { box-shadow: 0 12px 40px rgba(33,115,70,0.3); }
+            66% { box-shadow: 0 12px 40px rgba(210,71,38,0.3); }
+            100% { box-shadow: 0 12px 40px rgba(43,87,154,0.3); }
+        }
     </style>
 </head>
 <body>
+
+    <!-- Welcome Popup (first visit only) -->
+    <div id="welcomePopup">
+        <div class="popup-content">
+            <h2>تنبيه هام قبل البدء</h2>
+            <p>
+                مرحبًا! هذا الموقع يحتوي على تصحيح فيديوهات لامتحانات Word، Excel و PowerPoint.
+            </p>
+            <p>
+                <strong>انتبه جيدًا:</strong><br>
+                • الفيديوهات تعرض نفس الفكرة والخطوات المطلوبة في السؤال، لكن قد تختلف بعض التفاصيل (مثل: نسبة الشفافية 60% بدلاً من 40%، أو تنفيذ الأمر في الشريحة 6 بدلاً من 4، أو مكان النص، إلخ).<br><br>
+                • دائمًا ركّز على <strong>نص السؤال في جهاز الامتحان</strong> أولاً، ثم تابع الفيديو لتعرف الطريقة الصحيحة.
+            </p>
+            <p>
+                بعض الأسئلة تم حذفها لعدم توفر فيديو لها حاليًا.
+            </p>
+            <button id="closePopup">فهمت، ابدأ الآن</button>
+        </div>
+    </div>
+
     <div class="container">
         <h1>اختر التطبيق المطلوب</h1>
 
         <div class="apps">
             <a class="app app-word" href="Word/Word.html" role="button" aria-label="Microsoft Word">
                 <span class="label">Microsoft Word</span>
-                <!-- Word icon (small) -->
                 <svg class="icon" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <rect x="2" y="3" width="20" height="18" rx="2" fill="#2B579A"/>
                     <path d="M7 7h2.5L11 12l1.5-5H15l-2.5 8L15 19H12l-1.5-5L9 19H7l1.5-6L7 7z" fill="#fff"/>
@@ -102,16 +203,14 @@
 
             <a class="app app-excel" href="Excel/Excel.html" role="button" aria-label="Microsoft Excel">
                 <span class="label">Microsoft Excel</span>
-                <!-- Excel icon (small) -->
                 <svg class="icon" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <rect x="2" y="3" width="20" height="18" rx="2" fill="#217346"/>
                     <path d="M8 7h2.5L12 9.5 13.5 7H16l-2.5 3L16 13H13.5L12 10.5 10.5 13H8l2.5-3L8 7z" fill="#fff"/>
                 </svg>
             </a>
 
-            <a class="app app-ppt" href="powerpoint.html" role="button" aria-label="Microsoft PowerPoint">
+            <a class="app app-ppt" href="power/power.html" role="button" aria-label="Microsoft PowerPoint">
                 <span class="label">Microsoft PowerPoint</span>
-                <!-- PowerPoint icon (small) -->
                 <svg class="icon" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <rect x="2" y="3" width="20" height="18" rx="2" fill="#D24726"/>
                     <path d="M8 7h4a3 3 0 010 6H8V7zm6 0h2v8h-2V7z" fill="#fff"/>
@@ -119,5 +218,25 @@
             </a>
         </div>
     </div>
+
+    <script>
+        // عرض الـ Popup مرة واحدة فقط
+        if (!localStorage.getItem('welcomePopupSeen')) {
+            document.getElementById('welcomePopup').classList.add('show');
+        }
+
+        document.getElementById('closePopup').addEventListener('click', function() {
+            document.getElementById('welcomePopup').classList.remove('show');
+            localStorage.setItem('welcomePopupSeen', 'true');
+        });
+
+        // إغلاق بالضغط خارج الصندوق (اختياري)
+        document.getElementById('welcomePopup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('show');
+                localStorage.setItem('welcomePopupSeen', 'true');
+            }
+        });
+    </script>
 </body>
 </html>
